@@ -74,7 +74,7 @@ def main():
                     cv2.line(disp, current[i-1], current[i], (255,255,255), 2)  # Liga os pontos com linhas
 
         # Escreve as instruções na imagem
-        cv2.putText(disp, "ENTER fechar | N nova vaga | Z desfazer | S salvar | Q sair",
+        cv2.putText(disp, "[ENTER] Salvar | [N] Nova Vaga | [Z] Desfazer | [S] Salvar | [Q] Sair",
                     (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200,200,200), 2)
 
         cv2.imshow(window, disp)                 # Mostra a imagem na janela
