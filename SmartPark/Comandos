@@ -1,0 +1,3 @@
+python main.py
+python calibrate_slots.py --source 0 --out slots.json
+python vagas.py
