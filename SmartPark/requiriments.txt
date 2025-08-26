@@ -1,3 +1,5 @@
 opencv-python
 ultralytics
-streamlit
+numpy
+supervision
+matplotlib
