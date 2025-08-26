@@ -1,10 +1,11 @@
 import streamlit as st
 import cv2
-import pickle
+import json
 
-# Carregar dados das vagas
-with open("vagas.pkl", "rb") as f:
-    vagas = pickle.load(f)
+# Carregar dados das vagas (mesmo arquivo do main.py)
+with open("slots.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+    vagas = data["slots"]
 
 # Simulação de ocupação (por enquanto, só demonstrativo)
 # Depois iremos atualizar isso em tempo real
