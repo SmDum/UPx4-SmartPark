@@ -1,23 +1,45 @@
+# dashboard.py
 import streamlit as st
-import cv2
 import json
+import pandas as pd
+import altair as alt
+import time
 
-# Carregar dados das vagas (mesmo arquivo do main.py)
-with open("slots.json", "r", encoding="utf-8") as f:
-    data = json.load(f)
-    vagas = data["slots"]
+STATUS_JSON = "status.json"
+REFRESH_INTERVAL = 2  # segundos
 
-# Simulação de ocupação (por enquanto, só demonstrativo)
-# Depois iremos atualizar isso em tempo real
-status_vagas = {i: "Livre" for i in range(len(vagas))}
-
-# Configuração do layout
 st.set_page_config(page_title="Estacionamento Inteligente", layout="centered")
 
 st.title("🚗 Estacionamento Inteligente com IA")
-st.subheader("Mapa das Vagas")
+st.subheader("📡 Status em tempo real")
 
-# Mostrar status de cada vaga
-for i, vaga in enumerate(vagas):
-    st.write(f"Vaga {i+1}: **{status_vagas[i]}**")
+# Criar container vazio que será atualizado
+placeholder = st.empty()
 
+while True:
+    with placeholder.container():
+        try:
+            with open(STATUS_JSON, "r", encoding="utf-8") as f:
+                vagas = json.load(f)
+        except FileNotFoundError:
+            st.warning("⏳ Aguardando o sistema detectar vagas...")
+            time.sleep(REFRESH_INTERVAL)
+            continue
+
+        # Mostrar lista
+        for vaga in vagas:
+            cor = "🟢" if vaga["status"] == "Livre" else "🔴"
+            st.write(f"{cor} Vaga {vaga['vaga']} - {vaga['status']}")
+
+        # Gráfico
+        if vagas:
+            df = pd.DataFrame(vagas)
+            chart = alt.Chart(df).mark_bar().encode(
+                x="status",
+                y="count()",
+                color="status"
+            )
+            st.altair_chart(chart, use_container_width=True)
+
+    # Espera antes de atualizar novamente
+    time.sleep(REFRESH_INTERVAL)

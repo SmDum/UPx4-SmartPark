@@ -5,6 +5,7 @@ import numpy as np
 from ultralytics import YOLO
 
 SLOTS_JSON = "slots.json"   # gerado pelo calibrate_slots.py
+STATUS_JSON = "status.json" # atualizado em tempo real
 VIDEO_SOURCE = 0            # 0 = webcam | ou "data/estacionamento.mp4"
 CONF_MIN = 0.60             # confiança mínima para considerar a detecção
 VALID_CLASSES = {"car", "truck"}  # classes que contam como veículo
@@ -18,7 +19,6 @@ def load_slots(path):
     return data["slots"]
 
 def point_in_poly(pt, poly_pts):
-    """Ray casting: True se ponto (x,y) está dentro do polígono."""
     x, y = pt
     inside = False
     n = len(poly_pts)
@@ -30,7 +30,6 @@ def point_in_poly(pt, poly_pts):
     return inside
 
 def rect_poly_overlap_ratio(rect_xyxy, poly_pts, frame_wh):
-    """Aproxima a área de interseção (retângulo x polígono) / área do polígono via máscaras."""
     x1, y1, x2, y2 = [int(v) for v in rect_xyxy]
     w, h = frame_wh
     x1 = max(0, min(w - 1, x1)); x2 = max(0, min(w - 1, x2))
@@ -49,13 +48,11 @@ def rect_poly_overlap_ratio(rect_xyxy, poly_pts, frame_wh):
     return float(inter) / float(poly_area)
 
 def draw_slots(frame, slots, occupied_ids):
-    """Desenha as vagas coloridas e seus rótulos."""
     for s in slots:
         sid = s["id"]
         pts = np.array(s["points"], dtype=np.int32)
-        color = (0, 0, 255) if sid in occupied_ids else (0, 200, 70)  # BGR
+        color = (0, 0, 255) if sid in occupied_ids else (0, 200, 70)
         cv2.polylines(frame, [pts], True, color, 2)
-        # label no centróide
         cx, cy = pts.mean(axis=0).astype(int)
         txt = f"Vaga {sid} - {'OCUP.' if sid in occupied_ids else 'LIVRE'}"
         cv2.putText(frame, txt, (cx - 40, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2, cv2.LINE_AA)
@@ -65,13 +62,9 @@ def draw_slots(frame, slots, occupied_ids):
 # Main
 # ----------------------
 def main():
-    # 1) Modelo
     model = YOLO("yolov8n.pt")
-
-    # 2) Slots
     slots = load_slots(SLOTS_JSON)
 
-    # 3) Vídeo
     src = VIDEO_SOURCE if isinstance(VIDEO_SOURCE, int) or str(VIDEO_SOURCE).isdigit() else VIDEO_SOURCE
     if isinstance(src, str) and src.isdigit():
         src = int(src)
@@ -87,11 +80,9 @@ def main():
             break
         h, w = frame.shape[:2]
 
-        # 4) Inferência
         results = model(frame, stream=True, imgsz=640, conf=CONF_MIN)
 
-        # 5) Coletar detecções filtradas
-        detections = []  # lista de (x1,y1,x2,y2, label, conf)
+        detections = []
         for r in results:
             names = r.names
             for box in r.boxes:
@@ -102,8 +93,8 @@ def main():
                     x1, y1, x2, y2 = map(int, box.xyxy[0])
                     detections.append((x1, y1, x2, y2, label, conf))
 
-        # 6) Decidir ocupação por vaga
         occupied_ids = set()
+        status_vagas = []
         for s in slots:
             sid = s["id"]
             poly = s["points"]
@@ -119,14 +110,21 @@ def main():
             if occ:
                 occupied_ids.add(sid)
 
-        # 7) Desenhar vagas e (opcional) caixas dos veículos
+            status_vagas.append({
+                "vaga": sid,
+                "status": "Ocupado" if occ else "Livre"
+            })
+
+        # salvar no status.json
+        with open(STATUS_JSON, "w", encoding="utf-8") as f:
+            json.dump(status_vagas, f, ensure_ascii=False, indent=2)
+
         frame = draw_slots(frame, slots, occupied_ids)
         for (x1, y1, x2, y2, label, conf) in detections:
             cv2.rectangle(frame, (x1, y1), (x2, y2), (220, 220, 220), 1)
             cv2.putText(frame, f"{label} {conf:.2f}", (x1, max(0, y1 - 5)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (220, 220, 220), 1, cv2.LINE_AA)
 
-        # 8) Contadores
         total = len(slots)
         occ_count = len(occupied_ids)
         free_count = total - occ_count
@@ -136,7 +134,7 @@ def main():
         cv2.putText(frame, f"Livres: {free_count}", (150, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (50, 200, 50), 2)
 
         cv2.imshow("Parking AI", frame)
-        if cv2.waitKey(1) & 0xFF in (ord('q'), 27):  # q ou ESC
+        if cv2.waitKey(1) & 0xFF in (ord('q'), 27):
             break
 
     cap.release()
