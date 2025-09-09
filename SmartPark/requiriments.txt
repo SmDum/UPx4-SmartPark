@@ -1,5 +1,0 @@
-opencv-python
-ultralytics
-numpy
-supervision
-matplotlib
