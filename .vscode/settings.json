@@ -1,0 +1,18 @@
+{
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/*.pyo": true,
+      "**/.DS_Store": true,
+      "**/__init__.py": true,
+      "**/.pytest_cache": true
+    },
+    "search.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/*.pyo": true,
+      "**/.DS_Store": true,
+    },
+
+  }
+    
