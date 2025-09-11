@@ -9,7 +9,7 @@ Abra um PowerShell na raiz do projeto e execute:
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-pip install -r requiriments.txt
+pip install -r requirements.txt
 ```
 
 ## Configuração
