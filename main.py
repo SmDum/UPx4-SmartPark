@@ -65,7 +65,7 @@ def desenhar_vagas(imagem, vagas, vagas_ocupadas):
 
 # Função principal do programa
 def principal():
-    modelo = YOLO("yolov8n.pt")  # Carrega o modelo de IA para detectar carros
+    modelo = YOLO("best.pt")  # Carrega o modelo de IA para detectar carros
     vagas = carregar_vagas(PARKING_SPOTS_FILE)  # Carrega as vagas desenhadas
     redis_conn = RedisConnectionHandle().connect()
     redis_repo = RedisRepository(redis_conn)
