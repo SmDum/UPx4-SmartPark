@@ -11,8 +11,8 @@ from src.redis.models.redis.redis_repo import RedisRepository
 PARKING_SPOTS_FILE = "slots.json"   # Arquivo com as vagas desenhadas
 PARKING_STATUS_FILE = "status.json" # Arquivo onde será salvo o status das vagas (livre/ocupada)
 CAMERA_SOURCE = 0                   # 0 para webcam, ou coloque o caminho de um vídeo
-MIN_CONFIDENCE = 0.60               # Só considera o carro se a IA estiver pelo menos 60% confiante
-CAR_CLASSES = {"car", "truck"}      # Só conta carros e caminhões
+MIN_CONFIDENCE = 0.7              # Só considera o carro se a IA estiver pelo menos 60% confiante
+CAR_CLASSES = {"Carro"}      # Só conta carros e caminhões
 
 # Função para carregar as vagas do arquivo
 def carregar_vagas(caminho):
@@ -65,7 +65,7 @@ def desenhar_vagas(imagem, vagas, vagas_ocupadas):
 
 # Função principal do programa
 def principal():
-    modelo = YOLO("yolov8n.pt")  # Carrega o modelo de IA para detectar carros
+    modelo = YOLO("best.pt")  # Carrega o modelo de IA para detectar carros
     vagas = carregar_vagas(PARKING_SPOTS_FILE)  # Carrega as vagas desenhadas
     redis_conn = RedisConnectionHandle().connect()
     redis_repo = RedisRepository(redis_conn)
