@@ -11,7 +11,7 @@ from src.redis.models.redis.redis_repo import RedisRepository
 PARKING_SPOTS_FILE = "slots.json"   # Arquivo com as vagas desenhadas
 PARKING_STATUS_FILE = "status.json" # Arquivo onde será salvo o status das vagas (livre/ocupada)
 CAMERA_SOURCE = 0                   # 0 para webcam, ou coloque o caminho de um vídeo
-MIN_CONFIDENCE = 0.7              # Só considera o carro se a IA estiver pelo menos 60% confiante
+MIN_CONFIDENCE = 0.6              # Só considera o carro se a IA estiver pelo menos 60% confiante
 CAR_CLASSES = {"Carro"}      # Só conta carros e caminhões
 
 # Função para carregar as vagas do arquivo
@@ -59,8 +59,8 @@ def desenhar_vagas(imagem, vagas, vagas_ocupadas):
         cor = (0, 0, 255) if id_vaga in vagas_ocupadas else (0, 200, 70)  # Vermelho se ocupada, verde se livre
         cv2.polylines(imagem, [pontos], True, cor, 2)
         cx, cy = pontos.mean(axis=0).astype(int)
-        texto = f"Vaga {id_vaga} - {'OCUPADA' if id_vaga in vagas_ocupadas else 'LIVRE'}"
-        cv2.putText(imagem, texto, (cx - 40, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, cor, 2, cv2.LINE_AA)
+        cv2.putText(imagem, f"Vaga {id_vaga}", (cx - 40, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, cor, 2, cv2.LINE_AA)
+        cv2.putText(imagem, "OCUPADA" if id_vaga in vagas_ocupadas else "LIVRE", (cx - 40, cy + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, cor, 2, cv2.LINE_AA)
     return imagem
 
 # Função principal do programa
@@ -74,6 +74,10 @@ def principal():
     if isinstance(fonte, str) and fonte.isdigit():
         fonte = int(fonte)
     camera = cv2.VideoCapture(fonte)
+    
+    camera = cv2.VideoCapture(fonte)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)   # Largura desejada
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)   # Altura desejada
     if not camera.isOpened():
         raise RuntimeError(f"Não foi possível abrir a câmera ou vídeo: {CAMERA_SOURCE}")
 
@@ -132,17 +136,17 @@ def principal():
 
         imagem = desenhar_vagas(imagem, vagas, vagas_ocupadas)  # Desenha as vagas na imagem
         for (x1, y1, x2, y2, nome, confianca) in carros_detectados:
-            cv2.rectangle(imagem, (x1, y1), (x2, y2), (220, 220, 220), 1)
+            cv2.rectangle(imagem, (x1, y1), (x2, y2), (160, 32, 240), 1)
             cv2.putText(imagem, f"{nome} {confianca:.2f}", (x1, max(0, y1 - 5)),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (220, 220, 220), 1, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (160, 32, 240), 1, cv2.LINE_AA)
 
         total_vagas = len(vagas)
         ocupadas = len(vagas_ocupadas)
         livres = total_vagas - ocupadas
-        cv2.rectangle(imagem, (10, 10), (280, 80), (30, 30, 30), -1)
-        cv2.putText(imagem, f"Total: {total_vagas}", (20, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
-        cv2.putText(imagem, f"Ocupadas: {ocupadas}", (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (50, 200, 50) if ocupadas==0 else (50, 50, 200), 2)
-        cv2.putText(imagem, f"Livres: {livres}", (150, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (50, 200, 50), 2)
+        cv2.rectangle(imagem, (10, 10), (300, 80), (30, 30, 30), -1)
+        cv2.putText(imagem, f"Total: {total_vagas}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+        cv2.putText(imagem, f"Ocupadas: {ocupadas}", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (50, 200, 50) if ocupadas==0 else (50, 50, 200), 2)
+        cv2.putText(imagem, f"Livres: {livres}", (180, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (50, 200, 50), 2)
 
         cv2.imshow("Estacionamento Inteligente", imagem)  # Mostra a imagem na tela
         if cv2.waitKey(1) & 0xFF in (ord('q'), 27):  # Sai se apertar 'q' ou ESC
