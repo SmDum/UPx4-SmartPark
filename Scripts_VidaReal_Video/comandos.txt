@@ -1,0 +1,3 @@
+python calibrate_slots_video.py
+python main_video.py
+streamlit run dashboard_video.py

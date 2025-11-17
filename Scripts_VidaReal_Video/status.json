@@ -1,0 +1,74 @@
+[
+  {
+    "vaga": 1,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 2,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 3,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 4,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 5,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 6,
+    "status": "Livre"
+  },
+  {
+    "vaga": 7,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 8,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 9,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 10,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 11,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 12,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 13,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 14,
+    "status": "Ocupada"
+  },
+  {
+    "vaga": 15,
+    "status": "Livre"
+  },
+  {
+    "vaga": 16,
+    "status": "Livre"
+  },
+  {
+    "vaga": 17,
+    "status": "Livre"
+  },
+  {
+    "vaga": 18,
+    "status": "Ocupada"
+  }
+]
