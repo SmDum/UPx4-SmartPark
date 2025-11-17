@@ -1,6 +1,6 @@
 conn_options = {
-    "HOST": "redis-15479.crce196.sa-east-1-2.ec2.redns.redis-cloud.com",
-    "PORT": 15479,
+    "HOST": "redis-14887.c240.us-east-1-3.ec2.cloud.redislabs.com",
+    "PORT": 14887,
     "DB": 0,
-    "PASSWORD": "N9PEdtmSCkjUkJrCG9uYKnlgzMuUnCDs",
+    "PASSWORD": "hTaYPlno1HLSCcZdHjeQSVoXevRe0yDG",
 }

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from contextlib import asynccontextmanager
 import asyncio
 import redis.asyncio as redis
@@ -16,7 +16,7 @@ Teste do Dev tools
 
 
 
-REDIS_URL = "redis://:N9PEdtmSCkjUkJrCG9uYKnlgzMuUnCDs@redis-15479.crce196.sa-east-1-2.ec2.redns.redis-cloud.com:15479/0"
+REDIS_URL = "redis://:hTaYPlno1HLSCcZdHjeQSVoXevRe0yDG@redis-14887.c240.us-east-1-3.ec2.cloud.redislabs.com:14887/0"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -38,9 +38,12 @@ async def websocket_endpoint(ws: WebSocket):
     await pubsub.subscribe("vagas:update")
 
     async def reader():
-        async for message in pubsub.listen():
-            if message["type"] == "message":
-                await ws.send_text(message["data"])
+        try:
+            async for message in pubsub.listen():
+                if message["type"] == "message":
+                    await ws.send_text(message["data"])
+        except Exception:
+            pass
 
     reader_task = asyncio.create_task(reader())
 
@@ -48,12 +51,21 @@ async def websocket_endpoint(ws: WebSocket):
         while True:
             data = await ws.receive_text()
             await redis_client.publish("vagas:update", data)
-    except Exception:
+    except WebSocketDisconnect:
         pass
+    except Exception as e:
+        print(f"Erro no WebSocket: {e}")
     finally:
         reader_task.cancel()
+        try:
+            await reader_task
+        except asyncio.CancelledError:
+            pass
         await pubsub.close()
-        await ws.close()
+        try:
+            await ws.close()
+        except Exception:
+            pass
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

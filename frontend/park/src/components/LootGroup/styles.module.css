@@ -1,35 +1,18 @@
-
 .lootGroupContainer {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin: 20px 0;
+    gap: 10px;
 }
 
-.lefttop {
-    align-items: flex-end;
-}
-
-.leftbottom {
-    align-items: flex-end;
-    margin-top: 40px;
-}
-
-.righttop {
-    align-items: flex-start;
-}
-
-.rightbottom {
-    align-items: flex-start;
-    margin-top: 40px;
+.column {
+    align-items: center;
 }
 
 .left {
     align-items: flex-end;
-    gap: 12px;
 }
 
 .right {
     align-items: flex-start;
-    gap: 12px;
 }
+

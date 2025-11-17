@@ -1,58 +1,37 @@
 .lootContainer {
-    margin: 4px;
-    position: relative;
+    margin: 0;
 }
 
 .loot {
-    width: 150px;
+    width: 140px;
     height: 50px;
-    background-color: transparent;
     border: 2px solid #666;
-    border-radius: 4px;
-    position: relative;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
     cursor: pointer;
 }
 
 .loot:hover {
-    border-color: #999;
     transform: scale(1.05);
 }
 
+/* Vermelho para vaga ocupada */
 .ocupada {
-    background-color: #8B4B8C;
-    background-image: repeating-linear-gradient(
-        45deg,
-        #d81010,
-        #d81010 4px,
-        #b92323 4px,
-        #b92323 8px
-    );
+    background-color: #d81010;
     border-color: #f52f2f;
-    box-shadow: 0 0 10px rgba(139, 75, 140, 0.5); 
 }
 
+/* Verde para vaga disponível */
 .livre {
-    background-color: #2d5a2d;
-    background-image: repeating-linear-gradient(
-        45deg,
-        #2d5a2d,
-        #2d5a2d 4px,
-        #4a8f4a 4px,
-        #4a8f4a 8px
-    );
+    background-color: #4a8f4a;
     border-color: #5cb85c;
-    box-shadow: 0 0 10px rgba(45, 90, 45, 0.5);
 }
 
 .lootNumber {
-    color: #fff;
-    font-size: 12px;
+    color: white;
+    font-size: 14px;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    z-index: 2;
-    position: relative;
 }

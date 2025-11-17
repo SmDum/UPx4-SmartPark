@@ -17,6 +17,14 @@
   color: #e2e8f0;
 }
 
+@media (max-width: 480px) {
+  .legend {
+    flex-wrap: wrap;
+    row-gap: 10px;
+    border-radius: 14px;
+  }
+}
+
 .dot {
   width: 14px;
   height: 14px;

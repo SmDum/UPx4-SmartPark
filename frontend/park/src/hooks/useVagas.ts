@@ -15,6 +15,7 @@ function listasIguais(a: Vaga[], b: Vaga[]) {
 }
 
 export function useVagas() {
+  // Conecta ao WebSocket do backend
   const wsUrl = 'ws://localhost:8000/ws'
   const wsRef = useRef<WebSocket | null>(null)
   const [vagas, setVagas] = useState<Vaga[]>([])
